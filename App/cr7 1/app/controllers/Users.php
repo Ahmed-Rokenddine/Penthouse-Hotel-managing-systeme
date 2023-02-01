@@ -2,6 +2,7 @@
   class Users extends Controller {
     public function __construct(){
       $this->userModel = $this->model('User');
+      $this->adminModel = $this->model('Admin');
     }
 
     public function register(){
@@ -62,8 +63,10 @@
           $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
           // Register User
           if($this->userModel->register($data)){
-            flash('register_success', 'You are registered and can log in');
+            session_start();
+            $_SESSION['message'] = 'You are registered and can log in !';
             redirect('users/login');
+            exit;
           } else {
             die('Something went wrong');
           }
@@ -121,7 +124,11 @@
         // Check for user/email
         if($this->userModel->findUserByEmail($data['email'])){
           // User found
-        } else {
+        }elseif($this->adminModel->findadminByEmail($data['email'])){
+          // Admin found
+        }
+        
+        else {
           // User not found
           $data['email_err'] = 'No user found';
         }
@@ -131,11 +138,15 @@
           // Validated
          // Check and set logged in user
          $loggedInUser = $this->userModel->login($data['email'], $data['password']);
+         $loggedInAdmin = $this->adminModel->login($data['email'], $data['password']);
 
          if($loggedInUser){
            // Create Session
            $this->createUserSession($loggedInUser);
-         } else {
+         }elseif($loggedInAdmin){
+          $this->createAdminSession($loggedInAdmin);
+         }
+         else {
            $data['password_err'] = 'Password incorrect';
 
            $this->view('users/login', $data);
@@ -164,10 +175,21 @@
     $_SESSION['user_id'] = $user->id;
     $_SESSION['user_email'] = $user->email;
     $_SESSION['user_name'] = $user->name;
+    $_SESSION['message'] = "Welcome back " . $_SESSION['user_name'];
+    redirect('pages/index');
+  }
+  public function createAdminSession($admin){
+    $_SESSION['admin_id'] = $admin->id;
+    $_SESSION['admin_email'] = $admin->email;
+    $_SESSION['admin_name'] = $admin->name;
+    $_SESSION['message'] = "Welcome back " . $_SESSION['admin_name'];
     redirect('pages/index');
   }
 
   public function logout(){
+    unset($_SESSION['admin_id']);
+    unset($_SESSION['admin_email']);
+    unset($_SESSION['admin_name']);
     unset($_SESSION['user_id']);
     unset($_SESSION['user_email']);
     unset($_SESSION['user_name']);
@@ -175,8 +197,15 @@
     redirect('users/login');
   }
 
-  public function isLoggedIn(){
+  public function userisLoggedIn(){
     if(isset($_SESSION['user_id'])){
+      return true;
+    } else {
+      return false;
+    }
+  }
+  public function adminisLoggedIn(){
+    if(isset($_SESSION['admin_id'])){
       return true;
     } else {
       return false;

@@ -1,41 +1,45 @@
 <?php require APPROOT . '/views/inc/header.php'; ?>
+</section>
+</div>
   <div class="row">
     <div class="col-md-6 mx-auto">
-      <div class="card card-body bg-light mt-5">
-        <h2>Create An Account</h2>
-        <p>Please fill out this form to register with us</p>
+      <div class="card card-body bg-light mt-5 shadow">
+        <h2 class="title">Register</h2>
+        <img src="<?php echo URLROOT;?>/public/img/title.png" class="rounded-circle  align-self-center mb-4" width="30%" alt="...">
         <form action="<?php echo URLROOT; ?>/users/register" method="post">
           <div class="form-group">
-            <label for="name">Name: <sup>*</sup></label>
-            <input type="text" name="name" class="form-control form-control-lg <?php echo (!empty($data['name_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['name']; ?>">
+            <i class=" bi bi-person-vcard-fill position-absolute mt-1 " style ="left:6%;font-size: 1.6rem;"></i>
+            <input type="text" name="name" class="form-control form-control-lg text-center <?php echo (!empty($data['name_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['name']; ?>" placeholder=" First Name & Last Name">
             <span class="invalid-feedback"><?php echo $data['name_err']; ?></span>
           </div>
           <div class="form-group">
-            <label for="email">Email: <sup>*</sup></label>
-            <input type="email" name="email" class="form-control form-control-lg <?php echo (!empty($data['email_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['email']; ?>">
+            <i class="bi bi-envelope-fill position-absolute mt-1 " style ="left:6%;font-size: 1.6rem;"></i>
+            <input type="email" name="email"  class="form-control form-control-lg text-center <?php echo (!empty($data['email_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['email']; ?>" placeholder=" Email">
             <span class="invalid-feedback"><?php echo $data['email_err']; ?></span>
           </div>
           <div class="form-group">
-            <label for="password">Password: <sup>*</sup></label>
-            <input type="password" name="password" class="form-control form-control-lg <?php echo (!empty($data['password_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['password']; ?>">
+          <i class="bi bi-shield-lock-fill position-absolute mt-1 " style ="left:6%;font-size: 1.6rem;"></i>
+            <input type="password" name="password"  minlength="6"  class="form-control form-control-lg text-center <?php echo (!empty($data['password_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['password']; ?>" placeholder=" Password">
             <span class="invalid-feedback"><?php echo $data['password_err']; ?></span>
           </div>
           <div class="form-group">
-            <label for="confirm_password">Confirm Password: <sup>*</sup></label>
-            <input type="password" name="confirm_password" class="form-control form-control-lg <?php echo (!empty($data['confirm_password_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['confirm_password']; ?>">
+          <i class="bi bi-shield-lock position-absolute mt-1 " style ="left:6%;font-size: 1.6rem;"></i>
+            <input type="password" name="confirm_password"  minlength="6"  class="form-control form-control-lg  text-center <?php echo (!empty($data['confirm_password_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['confirm_password']; ?>" placeholder=" Confirm Password">
             <span class="invalid-feedback"><?php echo $data['confirm_password_err']; ?></span>
           </div>
 
-          <div class="row">
-            <div class="col">
+          
+            <div class="col mt-4">
               <input type="submit" value="Register" class="btn btn-success btn-block">
             </div>
-            <div class="col">
+            <div class="col mt-3">
               <a href="<?php echo URLROOT; ?>/users/login" class="btn btn-light btn-block">Have an account? Login</a>
             </div>
-          </div>
+          
         </form>
       </div>
     </div>
   </div>
-<?php require APPROOT . '/views/inc/footer.php'; ?>
+  <div class="mt-4">
+  <?php require APPROOT . '/views/inc/footer.php'; ?>
+  </div>

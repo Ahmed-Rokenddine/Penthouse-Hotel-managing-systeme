@@ -1,7 +1,7 @@
 <?php
   class Rooms extends Controller {
     public function __construct(){
-      if(!isLoggedIn()){
+      if(!adminisLoggedIn()){
         redirect('users/login');
       }
 
@@ -11,12 +11,24 @@
     public function index(){
       // Get Rooms
       $rooms = $this->roomModel->getRooms();
+      $reservations = $this->roomModel->getReservations();
+      $guests = $this->roomModel->getguestsByreservation();
 
+      
+        
+      
       $data = [
-        'rooms' => $rooms
+        'rooms' => $rooms,
+        'reservations' => $reservations,
+        'guests' => $guests
       ];
+      
+
+      
 
       $this->view('rooms/index', $data);
+
+  
     }
    
     public function add(){
@@ -27,18 +39,27 @@
         // initiate data
         $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         
-        
+         
+       
+          // update data
+          
+            
         $data = [
           
           'picture' => trim($_POST['picture']),
           'title' => trim($_POST['title']),
           'Price' => trim($_POST['Price']),
           'type' => trim($_POST['type']),
+          'Occupied' => trim($_POST['Statut']), 
           'Suitetype' => trim($_POST['Suitetype']),
           'title_err' => '',
           'Price_err' => '',
           'picture_err' => ''
         ];
+      
+              
+            
+       
 
         // Validate data
         if(empty($data['title'])){
@@ -57,7 +78,7 @@
         if(empty($data['title_err']) && empty($data['Price_err']) && empty($data['picture_err']) ){
           // Validated
           if($this->roomModel->addRoom($data)){
-            flash('room_message', 'Room added');
+            $_SESSION['message'] = 'Room Succesfully Added';
             redirect('rooms');
             
           } else {
@@ -94,37 +115,24 @@
         $room = $this->roomModel->getroomById($id);
         
         
-        if (!empty($data['picture'])) {
+        
           // update data
           
             $data = [
-              'id' => $id,
-              'title' => trim($_POST['title']),
-              'Price' => trim($_POST['Price']),
               'picture' => trim($_POST['picture']),
-              'type' => trim($_POST['type']),
-              'Suitetype' => trim($_POST['Suitetype']),
-              'title_err' => '',
-              'Price_err' => ''
-              
-            ];
-          
-      } else {
-          // update data
-          
-            $data = [
+              'picture_e' => $room->picture,
               'id' => $id,
               'title' => trim($_POST['title']),
               'Price' => trim($_POST['Price']),
-              'picture' => $room->picture,
               'type' => trim($_POST['type']),
+              'Occupied' => trim($_POST['Statut']), 
               'Suitetype' => trim($_POST['Suitetype']),
               'title_err' => '',
               'Price_err' => ''
               
             ];
           
-      }
+     
         
         
         
@@ -148,7 +156,7 @@
         if(empty($data['title_err']) && empty($data['Price_err']) && empty($data['picture_err']) ){
           // Validated
           if($this->roomModel->updateRoom($data)){
-            flash('room_message', 'Room Updated');
+            $_SESSION['message'] = 'Room Succesfully Modified';
             redirect('rooms');
           } else {
             die('Something went wrong');
@@ -163,11 +171,13 @@
         $room = $this->roomModel->getroomById($id);
         $data = [
           'id' => $id,
+          'picture' => $room->picture,
           'title' => $room->title,
           'Price' => $room->Price,
           'type' => $room->type,
-          'Suitetype' => $room->Suitetype,
-          'picture' => $room->picture
+          'Occupied' => $room->Occupied,
+          'Suitetype' => $room->Suitetype
+          
         ];
   
         $this->view('rooms/edit', $data);
@@ -180,7 +190,7 @@
         
 
         if($this->roomModel->deleteroom($id)){
-          flash('room_message', 'room Removed');
+          $_SESSION['message'] = 'Room Succesfully Deleted';
           redirect('rooms');
         } else {
           die('Something went wrong');
